@@ -1,2 +1,7 @@
 holaaaaaaaa probando actualización
 09/06/2026
+
+
+subiendo cambios desde mi rama feat/Yuvinca
+
+
