@@ -1,0 +1,43 @@
+name: CI - Validar archivos de texto
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+
+jobs:
+  validar-txt:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verificar que existan archivos .txt y no esten vacios
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          txt_count=$(find . -type f -name "*.txt" | wc -l)
+          if [ "$txt_count" -eq 0 ]; then
+            echo "::error::No se encontraron archivos .txt en el repositorio"
+            exit 1
+          fi
+
+          failed=0
+          while IFS= read -r -d '' file; do
+            if [ ! -s "$file" ]; then
+              echo "::error file=$file::El archivo esta vacio"
+              failed=1
+            fi
+          done < <(find . -type f -name "*.txt" -print0)
+
+          if [ "$failed" -ne 0 ]; then
+            echo "Hay archivos .txt vacios"
+            exit 1
+          fi
+
+          echo "Validacion OK: hay archivos .txt y ninguno esta vacio"
